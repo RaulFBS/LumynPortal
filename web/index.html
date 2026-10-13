@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html class="h-full" lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>LUMYN - Iniciar sesión</title>
+
+  <!-- Tailwind CSS CDN con plugins de forms y container-queries -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Google Fonts: Inter & Cormorant Garamond -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+          },
+          colors: {
+            lumyn: {
+              red: '#D91F26',
+              redHover: '#B9151B',
+              dark: '#111113',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Patrón de fondo geométrico oscuro */
+    .geometric-bg {
+      background-color: #0c0d10;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .geometric-bg::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border: 1.5px solid rgba(217, 31, 38, 0.45);
+      border-radius: 50%;
+      top: -180px;
+      left: -80px;
+      pointer-events: none;
+    }
+
+    .geometric-bg::after {
+      content: '';
+      position: absolute;
+      width: 750px;
+      height: 750px;
+      border: 1.5px solid rgba(217, 31, 38, 0.35);
+      border-radius: 50%;
+      bottom: -220px;
+      left: 10%;
+      pointer-events: none;
+    }
+
+    .diagonal-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 150%;
+      height: 100%;
+      background: linear-gradient(125deg, transparent 48%, rgba(217, 31, 38, 0.3) 48.5%, rgba(217, 31, 38, 0.3) 49%, transparent 49.5%);
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body class="h-full bg-white font-sans antialiased text-gray-900 selection:bg-red-500 selection:text-white">
+  <!-- Contenedor Principal -->
+  <main class="min-h-full w-full flex flex-col md:flex-row">
+    
+    <!-- Columna Izquierda: Presentación de Marca LUMYN -->
+    <section class="geometric-bg relative w-full md:w-1/2 flex flex-col justify-center px-10 sm:px-14 lg:px-20 py-16 text-white overflow-hidden min-h-[460px] md:min-h-screen">
+      <div class="diagonal-line"></div>
+      <div class="relative z-10 max-w-lg">
+        <div class="mb-14">
+          <div class="flex items-center gap-1">
+            <span class="text-4xl lg:text-5xl font-extrabold tracking-wider text-white font-sans">LUMY</span>
+            <span class="text-4xl lg:text-5xl font-extrabold tracking-wider text-lumyn-red font-sans">N</span>
+          </div>
+          <p class="mt-2 text-sm lg:text-base font-normal tracking-wide text-gray-400">
+            Gestión Operativa &amp; Proyectos B2B
+          </p>
+        </div>
+        <h1 class="font-serif text-3xl sm:text-4xl lg:text-5xl leading-tight font-normal text-gray-100 tracking-tight">
+          Impulsando el control y la colaboración empresarial
+        </h1>
+      </div>
+      <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-red-950/20 rounded-full blur-3xl pointer-events-none"></div>
+    </section>
+
+    <!-- Columna Derecha: Panel de Autenticación (Capa Vista) -->
+    <section class="w-full md:w-1/2 bg-white flex flex-col justify-between px-8 sm:px-14 lg:px-24 py-12 md:py-16 min-h-screen">
+      <div class="hidden md:block"></div>
+
+      <div class="w-full max-w-md mx-auto my-auto py-8">
+        <header class="mb-8">
+          <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900">
+            Iniciar sesión
+          </h2>
+          <p class="mt-2.5 text-sm sm:text-base text-gray-500 font-normal">
+            Bienvenido de nuevo. Por favor, ingresa tus credenciales.
+          </p>
+        </header>
+
+        <!-- Alerta dinámica de error de credenciales (se activa si la URL tiene ?error=true) -->
+        <div id="login-error-alert" class="hidden mb-4 p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs sm:text-sm text-red-700 flex items-center gap-2.5" role="alert">
+          <svg class="w-5 h-5 text-lumyn-red shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span>Credenciales incorrectas o usuario inactivo. Verifica tus datos.</span>
+        </div>
+
+        <!-- Formulario conectado al AuthController (Ajusta 'action' a la ruta de tu Servlet/Controller) -->
+        <form id="login-form" class="space-y-4" action="auth" method="POST">
+          <input type="hidden" name="accion" value="login">
+
+          <!-- Correo Corporativo -->
+          <div>
+            <label class="sr-only" for="corporate-email">Correo corporativo</label>
+            <div class="relative">
+              <input autocomplete="email" class="w-full h-12 px-4 rounded-xl border border-gray-300 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-lumyn-red/40 focus:border-lumyn-red text-sm transition-all duration-150" id="corporate-email" name="email" placeholder="Correo corporativo (ej. usuario@lumyn.com)" required type="email">
+            </div>
+          </div>
+
+          <!-- Contraseña con botón Mostrar/Ocultar -->
+          <div>
+            <label class="sr-only" for="password">Contraseña</label>
+            <div class="relative flex items-center">
+              <input autocomplete="current-password" class="w-full h-12 pl-4 pr-24 rounded-xl border border-gray-300 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-lumyn-red/40 focus:border-lumyn-red text-sm transition-all duration-150" id="password" name="password" placeholder="Contraseña" required type="password">
+              <button class="absolute right-3 inline-flex items-center gap-1.5 text-xs font-normal text-gray-500 hover:text-gray-800 transition-colors focus:outline-none" id="toggle-password" type="button">
+                <span id="toggle-label">mostrar</span>
+                <svg class="h-4 w-4 text-gray-500" fill="none" id="eye-icon" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Opciones: Recordarme y Recuperar Contraseña -->
+          <div class="flex items-center justify-between pt-1 pb-2">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input class="h-4 w-4 rounded border-gray-300 text-lumyn-red focus:ring-lumyn-red cursor-pointer transition" id="remember-me" name="remember-me" type="checkbox">
+              <span class="text-xs sm:text-sm text-gray-700 font-medium">Recordarme</span>
+            </label>
+            <button type="button" id="open-forgot-modal" class="text-xs sm:text-sm font-semibold text-lumyn-red hover:underline focus:outline-none cursor-pointer">
+              Olvidé mi contraseña
+            </button>
+          </div>
+
+          <!-- Botón de Envío -->
+          <div class="pt-2">
+            <button class="w-full h-12 bg-lumyn-red hover:bg-lumyn-redHover text-white font-medium text-sm sm:text-base rounded-xl shadow-sm hover:shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-lumyn-red focus:ring-offset-2 flex items-center justify-center" type="submit">
+              Ingresar al sistema
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Pie de página -->
+      <footer class="w-full text-center text-xs text-gray-400 leading-relaxed pb-4 pt-6 max-w-sm mx-auto">
+        <p>© 2026 LUMYN S.A. Todos los derechos reservados.</p>
+        <p>Acceso exclusivo para personal y clientes autorizados.</p>
+      </footer>
+    </section>
+  </main>
+
+  <!-- Modal: Recuperar Contraseña -->
+  <div id="forgot-password-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden transition-opacity duration-200" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 sm:p-8 transform transition-all duration-200" id="modal-container">
+      <button type="button" id="close-modal-x" class="absolute top-5 right-5 text-gray-400 hover:text-gray-700 transition-colors p-1 rounded-lg focus:outline-none" aria-label="Cerrar modal">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+
+      <!-- Vista 1: Formulario de recuperación -->
+      <div id="forgot-form-view">
+        <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-5 text-lumyn-red">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+        </div>
+        <h3 id="modal-headline" class="text-2xl font-bold text-gray-900 tracking-tight mb-2">Recuperar contraseña</h3>
+        <p class="text-sm text-gray-500 mb-6 leading-relaxed">
+          Ingresa tu correo corporativo registrado. Te enviaremos un enlace seguro con instrucciones para restablecer tu acceso.
+        </p>
+        <form id="forgot-password-form" class="space-y-4">
+          <div class="space-y-1">
+            <label for="recovery-email" class="block text-xs font-semibold uppercase tracking-wider text-gray-700">Correo corporativo</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              </span>
+              <input type="email" id="recovery-email" name="recovery-email" placeholder="ejemplo@lumyn.com" required class="w-full h-12 pl-11 pr-4 rounded-xl border border-gray-300 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-lumyn-red/40 focus:border-lumyn-red text-sm transition-all duration-150">
+            </div>
+          </div>
+          <div class="pt-2 flex flex-col gap-2.5">
+            <button type="submit" class="w-full h-12 bg-lumyn-red hover:bg-lumyn-redHover text-white font-medium text-sm rounded-xl shadow-sm hover:shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-lumyn-red flex items-center justify-center gap-2">
+              <span>Enviar enlace de recuperación</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              </svg>
+            </button>
+            <button type="button" id="cancel-modal-btn" class="w-full py-2.5 text-xs sm:text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors focus:outline-none">
+              Volver a iniciar sesión
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Vista 2: Confirmación de envío -->
+      <div id="forgot-success-view" class="hidden text-center py-4">
+        <div class="w-14 h-14 rounded-full bg-red-50 text-lumyn-red flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">¡Enlace enviado!</h3>
+        <p class="text-sm text-gray-600 mb-6 leading-relaxed">
+          Hemos enviado un correo con instrucciones para restablecer tu contraseña a <span id="confirmed-user-email" class="font-semibold text-gray-900"></span>. Revisa tu bandeja de entrada o spam.
+        </p>
+        <button type="button" id="done-modal-btn" class="w-full h-12 bg-lumyn-red hover:bg-lumyn-redHover text-white font-medium text-sm rounded-xl shadow-sm hover:shadow transition-all duration-200 focus:outline-none">
+          Entendido, volver al inicio
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts de Interactividad (Contraseña, Modal y Alertas) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Mostrar/Ocultar contraseña
+      const toggleButton = document.getElementById('toggle-password');
+      const passwordInput = document.getElementById('password');
+      const toggleLabel = document.getElementById('toggle-label');
+      const eyeIcon = document.getElementById('eye-icon');
+
+      if (toggleButton && passwordInput) {
+        toggleButton.addEventListener('click', () => {
+          const isPassword = passwordInput.getAttribute('type') === 'password';
+          if (isPassword) {
+            passwordInput.setAttribute('type', 'text');
+            toggleLabel.textContent = 'ocultar';
+            eyeIcon.innerHTML = `
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            `;
+          } else {
+            passwordInput.setAttribute('type', 'password');
+            toggleLabel.textContent = 'mostrar';
+            eyeIcon.innerHTML = `
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+            `;
+          }
+        });
+      }
+
+      // 2. Lógica del Modal "Olvidé mi contraseña"
+      const modal = document.getElementById('forgot-password-modal');
+      const openModalBtn = document.getElementById('open-forgot-modal');
+      const closeModalX = document.getElementById('close-modal-x');
+      const cancelModalBtn = document.getElementById('cancel-modal-btn');
+      const doneModalBtn = document.getElementById('done-modal-btn');
+      const forgotForm = document.getElementById('forgot-password-form');
+      const forgotFormView = document.getElementById('forgot-form-view');
+      const forgotSuccessView = document.getElementById('forgot-success-view');
+      const recoveryEmailInput = document.getElementById('recovery-email');
+      const confirmedUserEmail = document.getElementById('confirmed-user-email');
+
+      function openModal() {
+        modal.classList.remove('hidden');
+        forgotFormView.classList.remove('hidden');
+        forgotSuccessView.classList.add('hidden');
+        forgotForm.reset();
+        recoveryEmailInput.focus();
+      }
+
+      function closeModal() {
+        modal.classList.add('hidden');
+      }
+
+      if (openModalBtn) openModalBtn.addEventListener('click', openModal);
+      if (closeModalX) closeModalX.addEventListener('click', closeModal);
+      if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
+      if (doneModalBtn) doneModalBtn.addEventListener('click', closeModal);
+
+      // Cerrar modal haciendo clic fuera del contenedor o presionando Escape
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+      });
+
+      // Procesar envío del formulario de recuperación
+      if (forgotForm) {
+        forgotForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          confirmedUserEmail.textContent = recoveryEmailInput.value;
+          forgotFormView.classList.add('hidden');
+          forgotSuccessView.classList.remove('hidden');
+        });
+      }
+
+      // 3. Control de Intentos Fallidos y Bloqueo al 3er intento (Punto 6)
+      const urlParams = new URLSearchParams(window.location.search);
+      const errorType = urlParams.get('error');
+      const errorAlert = document.getElementById('login-error-alert');
+
+      if (errorType && errorAlert) {
+        errorAlert.classList.remove('hidden');
+        const msgSpan = errorAlert.querySelector('span');
+
+        if (errorType === 'intento') {
+          const n = urlParams.get('n') || 1;
+          msgSpan.textContent = `Contraseña incorrecta. Intento fallido ${n} de 3.`;
+        } else if (errorType === 'bloqueado') {
+          msgSpan.textContent = '¡USUARIO BLOQUEADO! Has superado los 3 intentos permitidos. Cerrando el sistema...';
+          // Deshabilitar formulario y cerrar ventana tras 3 segundos
+          document.querySelectorAll('#login-form input, #login-form button').forEach(el => el.disabled = true);
+          setTimeout(() => {
+            window.close();
+            // Fallback por si el navegador restringe window.close() en pestañas principales
+            document.body.innerHTML = `
+              <div class="h-screen w-full bg-lumyn-dark text-white flex flex-col items-center justify-center p-6 text-center">
+                <h1 class="text-3xl font-bold text-lumyn-red mb-2">Acceso Bloqueado por Seguridad</h1>
+                <p class="text-gray-400 max-w-md">Tu usuario ha sido bloqueado en la base de datos tras 3 intentos fallidos. Contacta al administrador de LUMYN.</p>
+              </div>`;
+          }, 3000);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

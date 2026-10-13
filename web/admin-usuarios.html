@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-gray-50">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMYN - Dashboard CRUD de Usuarios</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: { lumyn: { red: '#D91F26', redHover: '#B9151B', dark: '#0c0d10' } }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="h-full font-sans antialiased text-gray-900 flex flex-col">
+
+  <!-- Barra Superior -->
+  <header class="bg-lumyn-dark text-white border-b border-gray-800 px-8 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-0.5">
+        <span class="text-2xl font-extrabold tracking-wider text-white">LUMY</span>
+        <span class="text-2xl font-extrabold tracking-wider text-lumyn-red">N</span>
+      </div>
+      <span class="text-xs bg-red-950/60 text-red-400 border border-red-800/50 px-2.5 py-0.5 rounded-full font-medium">
+        Gestión de Accesos & Usuarios (CRUD)
+      </span>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="dashboard-pm.html" class="text-xs font-medium bg-gray-800 hover:bg-gray-700 text-gray-200 px-3.5 py-2 rounded-lg transition">
+        ← Volver al Panel Proyectos (PM)
+      </a>
+      <a href="index.html" class="text-xs font-semibold bg-lumyn-red hover:bg-lumyn-redHover text-white px-3.5 py-2 rounded-lg transition">
+        Cerrar sesión
+      </a>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-6 sm:px-8 py-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Control de Usuarios y Roles B2B</h1>
+        <p class="text-sm text-gray-500">Administra las credenciales, estados de bloqueo y altas del personal y clientes.</p>
+      </div>
+      <button onclick="document.getElementById('modal-usuario').classList.remove('hidden')" class="bg-lumyn-red hover:bg-lumyn-redHover text-white text-sm font-medium px-4 py-2.5 rounded-xl shadow-sm transition inline-flex items-center gap-2">
+        <span>+ Registrar Nuevo Usuario</span>
+      </button>
+    </div>
+
+    <!-- Tabla CRUD Conectada a MySQL -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="text-base font-semibold text-gray-900">Usuarios Registrados en el Sistema</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider border-b border-gray-200">
+              <th class="py-3.5 px-6">ID</th>
+              <th class="py-3.5 px-6">Correo / Username</th>
+              <th class="py-3.5 px-6">Rol Asignado</th>
+              <th class="py-3.5 px-6">Intentos Fallidos</th>
+              <th class="py-3.5 px-6">Estado</th>
+              <th class="py-3.5 px-6 text-center">Acciones (CRUD)</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-usuarios-body" class="divide-y divide-gray-200 text-sm">
+            <tr>
+              <td colspan="6" class="py-6 text-center text-gray-400">Cargando usuarios desde MySQL...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal 1: Registrar Nuevo Usuario (CREATE) -->
+  <div id="modal-usuario" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-gray-900">Registrar Nuevo Usuario</h3>
+        <button onclick="document.getElementById('modal-usuario').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">✕</button>
+      </div>
+      <form class="space-y-4" action="usuario-crud" method="POST">
+        <input type="hidden" name="accion" value="crear">
+        <div>
+          <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Correo Corporativo</label>
+          <input type="email" name="email" required placeholder="usuario@lumyn.com" class="w-full h-11 px-3.5 rounded-xl border border-gray-300 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Contraseña Temporal</label>
+          <input type="password" name="password" required placeholder="••••••••" class="w-full h-11 px-3.5 rounded-xl border border-gray-300 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Rol de Usuario</label>
+          <select name="rolId" class="w-full h-11 px-3.5 rounded-xl border border-gray-300 text-sm">
+            <option value="1">Project Manager (Agencia)</option>
+            <option value="2">Cliente B2B (Empresa)</option>
+          </select>
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="document.getElementById('modal-usuario').classList.add('hidden')" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">Cancelar</button>
+          <button type="submit" class="px-5 py-2 bg-lumyn-red hover:bg-lumyn-redHover text-white text-sm font-medium rounded-xl">Guardar Usuario</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Editar Usuario / Rol / Estado (UPDATE) -->
+  <div id="modal-editar" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-gray-900">Editar Usuario</h3>
+        <button onclick="document.getElementById('modal-editar').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">✕</button>
+      </div>
+      <form class="space-y-4" action="usuario-crud" method="POST">
+        <input type="hidden" name="accion" value="editar">
+        <input type="hidden" name="idUsuario" id="edit-id">
+        <div>
+          <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Correo Corporativo</label>
+          <input type="email" name="email" id="edit-email" required class="w-full h-11 px-3.5 rounded-xl border border-gray-300 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Rol Asignado</label>
+          <select name="rolId" id="edit-rol" class="w-full h-11 px-3.5 rounded-xl border border-gray-300 text-sm">
+            <option value="1">PROJECT_MANAGER (Agencia)</option>
+            <option value="2">CLIENTE_B2B (Empresa)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Estado de Acceso</label>
+          <select name="bloqueado" id="edit-bloqueado" class="w-full h-11 px-3.5 rounded-xl border border-gray-300 text-sm">
+            <option value="false">Activo (Reiniciar intentos a 0)</option>
+            <option value="true">Bloqueado</option>
+          </select>
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="document.getElementById('modal-editar').classList.add('hidden')" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">Cancelar</button>
+          <button type="submit" class="px-5 py-2 bg-lumyn-red hover:bg-lumyn-redHover text-white text-sm font-medium rounded-xl">Actualizar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Script que conecta la tabla con el Servlet UsuarioCrudServlet -->
+  <script>
+    function abrirModalEditar(id, email, rol, bloqueado) {
+      document.getElementById('edit-id').value = id;
+      document.getElementById('edit-email').value = email;
+      document.getElementById('edit-rol').value = (rol === 'PROJECT_MANAGER') ? '1' : '2';
+      document.getElementById('edit-bloqueado').value = bloqueado ? 'true' : 'false';
+      document.getElementById('modal-editar').classList.remove('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('usuario-crud')
+        .then(res => res.json())
+        .then(usuarios => {
+          const tbody = document.getElementById('tabla-usuarios-body');
+          tbody.innerHTML = '';
+
+          usuarios.forEach(u => {
+            const badgeRol = u.rol === 'PROJECT_MANAGER'
+              ? '<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-lumyn-red">PROJECT_MANAGER</span>'
+              : '<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700">CLIENTE_B2B</span>';
+
+            const badgeEstado = u.bloqueado
+              ? '<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Bloqueado</span>'
+              : '<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">Activo</span>';
+
+            tbody.innerHTML += `
+              <tr>
+                <td class="py-4 px-6 text-gray-600 font-mono">${u.id}</td>
+                <td class="py-4 px-6 font-medium text-gray-900">${u.username}</td>
+                <td class="py-4 px-6">${badgeRol}</td>
+                <td class="py-4 px-6 text-gray-600">${u.intentos} / 3</td>
+                <td class="py-4 px-6">${badgeEstado}</td>
+                <td class="py-4 px-6 text-center space-x-3">
+                  <button type="button" onclick="abrirModalEditar(${u.id}, '${u.username}', '${u.rol}', ${u.bloqueado})" class="text-xs text-blue-600 hover:underline font-medium">
+                    Editar
+                  </button>
+                  <form action="usuario-crud" method="POST" class="inline" onsubmit="return confirm('¿Seguro que deseas eliminar a ${u.username}?');">
+                    <input type="hidden" name="accion" value="eliminar">
+                    <input type="hidden" name="idUsuario" value="${u.id}">
+                    <button type="submit" class="text-xs text-lumyn-red hover:underline font-medium">Eliminar</button>
+                  </form>
+                </td>
+              </tr>`;
+          });
+        });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+# Ignorar el archivo de credenciales de Base de Datos
+**/db.properties
+
+# Ignorar carpetas temporales de compilación de NetBeans
+build/
+nbproject/private/
