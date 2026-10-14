@@ -18,43 +18,29 @@ public class DatabaseConnection {
 
     // Bloque estático: lee db.properties y carga el Driver 1 SOLA VEZ en memoria RAM
     static {
-        try {
-            Properties props = new Properties();
-            try (InputStream input = DatabaseConnection.class.getResourceAsStream("db.properties")) {
-                if (input != null) {
-                    props.load(input);
-                    System.out.println("✅ Archivo db.properties cargado en memoria.");
-                } else {
-                    System.err.println("❌ ERROR: No se encontró db.properties dentro del paquete 'config'");
-                }
-            } catch (IOException e) {
-                System.err.println("❌ Error leyendo db.properties: " + e.getMessage());
-            }
+    try {
+        // Forzar lectura directa de las variables de entorno de Railway
+        url = System.getenv("DB_URL");
+        user = System.getenv("DB_USER");
+        password = System.getenv("DB_PASSWORD");
 
-            url = System.getenv("DB_URL");
-            user = System.getenv("DB_USER");
-            password = System.getenv("DB_PASSWORD");
-
-            url = props.getProperty("db.url");
-            if (url == null || url.isEmpty()) {
-                url = System.getenv("DB_URL");
-            }
-
-            user = props.getProperty("db.user");
-            if (user == null || user.isEmpty()) {
-                user = System.getenv("DB_USER");
-            }
-
-            password = props.getProperty("db.password");
-            if (password == null || password.isEmpty()) {
-                password = System.getenv("DB_PASSWORD");
-            }
-
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException ex) {
-            System.err.println("❌ Error al cargar el driver de MySQL: " + ex.getMessage());
+        if (url == null || url.trim().isEmpty()) {
+            // Respaldo por si corre local sin variables
+            url = "jdbc:mysql://iriguchi.proxy.rlwy.net:50154/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
         }
+        if (user == null || user.trim().isEmpty()) {
+            user = "root";
+        }
+        if (password == null || password.trim().isEmpty()) {
+            password = "TU_PASSWORD_LARGA_DE_RAILWAY";
+        }
+
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        System.out.println("🌐 URL de BD configurada en la nube: " + url);
+    } catch (ClassNotFoundException ex) {
+        System.err.println("❌ Error al cargar el driver de MySQL: " + ex.getMessage());
     }
+}
 
     private DatabaseConnection() throws SQLException {
         long t0 = System.currentTimeMillis();
