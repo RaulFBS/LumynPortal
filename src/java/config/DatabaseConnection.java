@@ -31,11 +31,11 @@ public class DatabaseConnection {
                 System.err.println("❌ Error leyendo db.properties: " + e.getMessage());
             }
 
-            url = props.getProperty("db.url", System.getenv("DB_URL"));
-            user = props.getProperty("db.user", System.getenv("DB_USER"));
-            password = props.getProperty("db.password", System.getenv("DB_PASSWORD"));
+            url = System.getenv("DB_URL");
+            user = System.getenv("DB_USER");
+            password = System.getenv("DB_PASSWORD");
 
-           url = props.getProperty("db.url");
+            url = props.getProperty("db.url");
             if (url == null || url.isEmpty()) {
                 url = System.getenv("DB_URL");
             }
