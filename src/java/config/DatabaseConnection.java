@@ -35,15 +35,19 @@ public class DatabaseConnection {
             user = props.getProperty("db.user", System.getenv("DB_USER"));
             password = props.getProperty("db.password", System.getenv("DB_PASSWORD"));
 
-            if (url != null) {
-                // Reemplaza localhost por 127.0.0.1 automáticamente para eliminar los 3 seg de demora IPv6 en Windows
-                url = url.trim().replace("localhost", "127.0.0.1");
+           url = props.getProperty("db.url");
+            if (url == null || url.isEmpty()) {
+                url = System.getenv("DB_URL");
             }
-            if (user != null) {
-                user = user.trim();
+
+            user = props.getProperty("db.user");
+            if (user == null || user.isEmpty()) {
+                user = System.getenv("DB_USER");
             }
-            if (password != null) {
-                password = password.trim().replace("\"", "");
+
+            password = props.getProperty("db.password");
+            if (password == null || password.isEmpty()) {
+                password = System.getenv("DB_PASSWORD");
             }
 
             Class.forName("com.mysql.cj.jdbc.Driver");
